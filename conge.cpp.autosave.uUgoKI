@@ -1,0 +1,184 @@
+#include "conge.h"
+#include <QSqlQuery>
+#include<QtDebug>
+#include <QVariant>
+#include "ui_accueil.h"
+   conge::conge()
+    {
+    cin_employe=0;
+    idconge=0;
+    date_depart="";
+    date_retour="";
+    confirmation="";
+    }
+   conge::conge(int c,QString dd,QString dr,QString n,QString cf, int ci)
+    {
+    idconge=c;nature=n;dr=date_retour;date_depart=dd;confirmation=cf;cin_employe=ci;}
+     conge::conge(QString dp,QString dr,QString c,QString n,int id)
+     {
+       nature=n;date_retour=dr;date_depart=dp;confirmation=c,idconge=id;
+
+     }
+
+    int conge::getcin_employe(){return cin_employe;};
+    QString conge::getdate_depart(){return date_depart ;};
+    QString conge::getdate_retour(){return date_retour;};
+    int conge::getidconge(){return idconge ;};
+    QString conge::getconfirmation(){return confirmation;};
+    QString conge::getnature(){return nature;};
+
+    void conge::setcin_employe(int ci){cin_employe=ci;};
+    void conge::setidconge(int c){idconge=c;};
+    void conge::setdate_depart(QString dp){date_depart=dp;};
+    void conge::setdate_retour(QString dr){date_retour=dr;};
+
+      void conge::setconfirmation(QString cf){confirmation=cf;};
+        void conge::setnature(QString nt){nature=nt;};
+
+    int conge::lastIdconge(){
+        int lastIdc=0;
+        QSqlQuery qry3 ;
+        qry3.prepare("select id_conge from conge ");
+        if (qry3.exec()){
+        while(qry3.next()){
+            lastIdc = qry3.value(0).toInt();}
+        }
+        return lastIdc+1;
+    }
+    bool conge::ajouter(){
+  int l = lastIdconge();
+        QSqlQuery query;
+        QString scin=QString::number(cin_employe);
+        QString sa=QString::number(l);
+
+
+        query.prepare("INSERT INTO CONGE(cin_employe,date_depart,date_retour,nature,confirmation,id_conge) VALUES (:ci,:dp,:dr,:n,:cf,:c)");
+        query.bindValue(":ci",scin);
+        query.bindValue(":dp",date_depart);
+        query.bindValue(":dr",date_retour);
+        query.bindValue(":n",nature);
+        query.bindValue(":cf",confirmation);
+        query.bindValue(":c",sa);
+
+        return query.exec();
+    }
+    bool conge::ajouter11()
+    {
+        int l = lastIdconge();
+        QSqlQuery query;
+        QString scin=QString::number(cin_employe);
+        QString sa=QString::number(l);
+
+         qDebug()<<scin<<date_depart<<date_retour<<nature<<sa;
+        query.prepare("INSERT INTO CONGE VALUES ('12345678',:dp,:dr,:n,'En attente',1)");
+        query.addBindValue("12345678");
+        query.addBindValue(date_depart);
+        query.addBindValue(date_retour);
+        query.addBindValue(nature);
+        query.addBindValue("En attente");
+        query.addBindValue("En attente");
+        
+        query.bindValue("12345678",scin);
+        query.bindValue(":dp",date_depart);
+        query.bindValue(":dr",date_retour);
+        query.bindValue(":n",nature);
+        query.bindValue("En attente",confirmation);
+        query.bindValue(":c",sa);
+
+        return query.exec();
+    }
+
+    bool conge::supprimer(int cinn){
+        QSqlQuery query;
+        query.prepare("DELETE FROM CONGE WHERE id_conge=:cinn");
+        query.bindValue(0,cinn);
+
+        return query.exec();
+    }
+    bool conge::supprimer1(int cinn){
+        QSqlQuery query;
+        query.prepare("DELETE FROM CONGE WHERE CIN_EMPLOYE=:cinn");
+        query.bindValue(0,cinn);
+
+        return query.exec();
+    }
+    bool conge::modifier()
+    {
+        QSqlQuery query;
+           QString scin=QString::number(idconge);
+      query.prepare("Update conge set date_depart=:dp,date_retour=:dr,nature=:n,confirmation=:cf,id_conge=:c where id_conge=:c");
+      query.bindValue(":dp",date_depart);
+      query.bindValue(":dr",date_retour);
+      query.bindValue(":n",nature);
+      query.bindValue(":cf",confirmation);
+      query.bindValue(":c",scin);
+      return query.exec();
+    }
+    QSqlQueryModel * conge::afficher(){
+
+
+    QSqlQueryModel* model   = new QSqlQueryModel();
+
+    model->setQuery("select * from CONGE where confirmation in ('Acceptee','Accept��e')");
+
+    model->setHeaderData(0, Qt::Horizontal,QObject::tr("CIN_EMPLOYE"));
+    model->setHeaderData(1, Qt::Horizontal,QObject::tr("DATE_DEPART"));
+    model->setHeaderData(2, Qt::Horizontal,QObject::tr("DATE_RETOUR"));
+    model->setHeaderData(3, Qt::Horizontal,QObject::tr("NATURE"));
+    model->setHeaderData(4, Qt::Horizontal,QObject::tr("CONFIRMATION"));
+    model->setHeaderData(5, Qt::Horizontal,QObject::tr("IDCONGE"));
+
+
+    return model;
+    }
+    QSqlQueryModel * conge::afficher1(){
+
+
+    QSqlQueryModel* model   = new QSqlQueryModel();
+     QString e="En_attente";
+    model->setQuery("select * from CONGE where confirmation not in('Acceptée','Refusée','Accept��e','Refus��e')");
+    model->setHeaderData(0, Qt::Horizontal,QObject::tr("CIN_EMPLOYE"));
+    model->setHeaderData(1, Qt::Horizontal,QObject::tr("DATE_DEPART"));
+    model->setHeaderData(2, Qt::Horizontal,QObject::tr("DATE_RETOUR"));
+    model->setHeaderData(3, Qt::Horizontal,QObject::tr("NATURE"));
+    model->setHeaderData(4, Qt::Horizontal,QObject::tr("CONFIRMATION"));
+    model->setHeaderData(5, Qt::Horizontal,QObject::tr("IDCONGE"));
+
+
+    return model;
+    }
+    QSqlQueryModel * conge::afficher2(){
+
+
+    QSqlQueryModel* model   = new QSqlQueryModel();
+
+    model->setQuery("select * from CONGE where confirmation in ('Refusée','Refus��e')");
+
+    model->setHeaderData(0, Qt::Horizontal,QObject::tr("CIN_EMPLOYE"));
+    model->setHeaderData(1, Qt::Horizontal,QObject::tr("DATE_DEPART"));
+    model->setHeaderData(2, Qt::Horizontal,QObject::tr("DATE_RETOUR"));
+    model->setHeaderData(3, Qt::Horizontal,QObject::tr("NATURE"));
+    model->setHeaderData(4, Qt::Horizontal,QObject::tr("CONFIRMATION"));
+    model->setHeaderData(5, Qt::Horizontal,QObject::tr("IDCONGE"));
+
+
+    return model;
+    }
+    QSqlQueryModel * conge::afficher11(int cin){
+
+
+    QSqlQueryModel* model   = new QSqlQueryModel();
+   QString cinn=QString::number(cin);
+    model->setQuery("select * from CONGE where cin_employe='"+cinn+"'");
+    model->setHeaderData(0, Qt::Horizontal,QObject::tr("CIN_EMPLOYE"));
+    model->setHeaderData(1, Qt::Horizontal,QObject::tr("DATE_DEPART"));
+    model->setHeaderData(2, Qt::Horizontal,QObject::tr("DATE_RETOUR"));
+    model->setHeaderData(3, Qt::Horizontal,QObject::tr("NATURE"));
+    model->setHeaderData(4, Qt::Horizontal,QObject::tr("CONFIRMATION"));
+    model->setHeaderData(5, Qt::Horizontal,QObject::tr("IDCONGE"));
+
+
+    return model;
+    }
+
+

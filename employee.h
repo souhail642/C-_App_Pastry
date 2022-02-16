@@ -1,0 +1,76 @@
+#ifndef EMPLOYEE_H
+#define EMPLOYEE_H
+
+#include <QSqlQueryModel>
+#include<QString>
+#include<QSqlDatabase>
+#include<QSqlError>
+#include<QSqlQuery>
+#include<QFileInfo>
+#include<QMessageBox>
+#include<QDebug>
+#include<QFileDialog>
+#include<QDialog>
+#include<QtCore>
+#include <QObject>
+#include<QtGui>
+#include "accueil.h"
+#include "ui_accueil.h"
+#include "connexion.h"
+#include "smtp1.h"
+class Employee
+{
+public:
+    Employee();
+    Employee(QString,QString,QString,QString,QString,QString,int,QString,int,int,QString,QString);
+    Employee(QString,QString,QString,int,QString,QString);
+    Employee(QString,QString,QString,int,int,QString);
+ Employee(QString);
+    QString getcin();
+    QString getnom();
+    QString getprenom();
+    int getage();
+    int getevaluation();
+    int gettelephone();
+    QString getdatenais();
+    QString getdateentr();
+    QString getspecialite();
+    QString getemail();
+    QString getpassword();
+    QString getrole();
+
+    void setnom(QString);
+    void setprenom(QString);
+    void setcin(QString);
+    void setage(int);
+    void settelephone(int);
+    void setevaluation(int);
+    void setdatenais(QString);
+    void setdateentr(QString);
+    void setemail(QString);
+    void setpassword(QString);
+    void setrole(QString);
+    void setspecialite(QString);
+
+    bool ajouter();
+     bool modifier(Employee,QString);
+     bool modifier12();
+    bool supprimer(QString);
+    bool verif_tel_et_cin(QString);
+    bool verif_date(QString);
+    bool verif_nom(QString);
+    bool verif_mail(QString);
+    QSqlQueryModel * afficher();
+    QSqlQueryModel * afficher11();
+bool modifiereval();
+
+
+    void Recherche(Ui::accueil *ui);
+private:
+    int age,telephone,evaluation;
+    QString cin,nom,prenom,specialite,role,email,password,datenais,dateentr;
+
+
+};
+
+#endif // EMPLOYEE_H
